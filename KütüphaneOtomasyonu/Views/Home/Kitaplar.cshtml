@@ -102,6 +102,10 @@
     }
 </style>
 
+@if (ViewBag.HataMesaji != null)
+{
+    <div class="alert alert-danger">@ViewBag.HataMesaji</div>
+}
 
 <div class="forms-wrapper">
     <div class="form-card">
