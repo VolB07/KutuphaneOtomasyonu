@@ -1,0 +1,161 @@
+﻿@model KütüphaneOtomasyonu.DataModel.Kakitap
+@{
+    ViewBag.Title = "Oduncver";
+}
+
+<h2>Oduncver</h2>
+<div class="forms-wrapper">
+    <div class="form-card">
+        <h3>Kitap Ekle</h3>
+        <form action="/Home/Oduncver" method="post">
+            <label>Kitap Adı :</label>
+            <select name="KitapAdi">
+                <option disabled selected>Kitap Seçiciz.</option>
+                @foreach (var item in Model.Kitaps)
+                {
+                    if (@item.AktifMi == true)
+                    {
+                        <option>@item.KitapAdi</option>
+                    }
+                }
+            </select>
+            <label>Öğrenci Adı :</label>
+            <select name="OgrenciAdi">
+                <option disabled selected>Bölüm Seçiniz.</option>
+                @foreach (var item in Model.Ogrencis)
+                {
+                    if (@item.SilindiMi == false)
+                    {
+                        <option>@item.Ad</option>
+                    }
+                }
+            </select>
+            <label>Personel Adı :</label>
+            <select name="PersonelAdi">
+                <option disabled selected>Bölüm Seçiniz.</option>
+                @foreach (var item in Model.Personels)
+                {
+                    if (@item.AktifMi == true)
+                    {
+                        <option>@item.Ad</option>
+                    }
+                }
+            </select>
+            <label>Açıklama :</label>
+            <input type="text" name="acikla" />
+            <input type="submit" name="Odver" value="Ödünç ver" />
+        </form>
+    </div>
+
+    @if (Model.seciliodunc != null)
+    {
+        <div class="form-card">
+            <h3>Ödünç Güncelle</h3>
+            <form action="/Home/Oduncver" method="post">
+                <input type="hidden" name="OduncID" value="@Model.seciliodunc.OduncID" />
+                <label>Kitap Adı :</label>
+                <input type="hidden" name="KitID" value="@Model.seciliodunc.KitapID"/>
+                <select name="KitapAdi">
+                    <option disabled selected>@Model.seciliodunc.Kitap.KitapAdi</option>
+                    @foreach (var item in Model.Kitaps)
+                    {
+                        <option>@item.KitapAdi</option>
+                    }
+                </select>
+                <input type="hidden" name="OgrID" value="@Model.seciliodunc.OgrenciID"/>
+                <label>Öğrenci Adı :</label>
+                <select name="oAd">
+                    <option disabled selected>@Model.seciliodunc.Ogrenci.Ad</option>
+                    @foreach (var item in Model.Ogrencis)
+                    {
+                        <option>@item.Ad</option>
+                    }
+                </select>
+                <label>Personel Adı :</label>
+                <input type="hidden" name="PerID" value="@Model.seciliodunc.PersonelID"/>
+                <select name="PersonelAdi">
+                    <option disabled selected>@Model.seciliodunc.Personel.Ad</option>
+                    @foreach (var item in Model.Personels)
+                    {
+                        <option>@item.Ad</option>
+                    }
+                </select>
+                <label>aciklama</label>
+                <input type="text" name="Aciklama" value="@Model.seciliodunc.Aciklama" />
+                <input type="submit" name="OduncGuncelle" value="Güncelle" />
+            </form>
+        </div>
+    }
+
+</div>
+
+   
+
+<table>
+    <tr>
+        <td>Kitap Adı</td>
+        <td>öğrenci Adı</td>
+        <td>Personel Adı</td>
+        <td>Ödünç alma tarihi</td>
+        <td>İade Tarihi</td>
+        <td>Teslim Alındı mı?</td>
+        <td>Kalan Gün</td>
+        <td>Aciklama</td>
+        <td>Oluşturma Tarihi</td>
+        <td>Güncelleme Tarihi</td>
+        <td>İşlemler</td>
+    </tr>
+    @foreach (var item in Model.Oduncs)
+    {
+        
+        <tr style="height:auto">
+            <td style="width:auto">@item.Kitap.KitapAdi</td>
+            <td>@item.Ogrenci.Ad</td>
+            <td>@item.Personel.Ad</td>
+            <td>@item.OduncAlmaTarihi</td>
+            <td>@item.IadeTarihi</td>
+            @if (item.KalanGun < 0)
+            {
+                <td><span style="color:red;">Gecikti</span></td>
+            }
+            else if (item.TeslimAlindiMi == false)
+            {
+                <td>Hayır</td>
+            }
+            else if (item.TeslimAlindiMi == true)
+            {
+                <td>Evet</td>
+            }
+
+            @if (item.KalanGun < 0)
+            {
+                <td>@item.KalanGun</td>
+            }
+            else if (item.TeslimAlindiMi == false)
+            {
+                <td>@item.KalanGun</td>
+            }
+            else if (item.TeslimAlindiMi == true)
+            {
+                <td>-</td>
+            }
+            <td>@item.Aciklama</td>
+            <td>@item.OlusturmaTarihi</td>
+            <td>@item.GuncellemeTarihi</td>
+            <td>
+                @*<form action="/Home/Oduncver" method="post">
+                <input type="hidden" name="oduncID" value="@item.OduncID"/>
+                <input type="submit" name="oduncsil" value="Sil" />
+            </form>*@
+                <form action="/Home/Oduncver" method="post">
+                    <input type="hidden" name="oduncID" value="@item.OduncID" />
+                    <input type="submit" name="OduncBul" value="Bul" />
+                </form>
+                <form action="/Home/Oduncver" method="post">
+                    <input type="hidden" name="tesID" value="@item.OduncID" />
+                    <input type="submit" name="teslim" value="Teslim Edildi" />
+                </form>
+            </td>
+        </tr>
+    }
+</table>

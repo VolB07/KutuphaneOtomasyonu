@@ -1,0 +1,183 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="KutuphaneOtomasyon3Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Bolum">
+    <Key>
+      <PropertyRef Name="BolumID" />
+    </Key>
+    <Property Name="BolumID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BolumAdi" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+    <Property Name="GuncellemeTarihi" Type="datetime" />
+    <Property Name="AktifMi" Type="bit" />
+  </EntityType>
+  <EntityType Name="Kategori">
+    <Key>
+      <PropertyRef Name="KategoriID" />
+    </Key>
+    <Property Name="KategoriID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="KategoriAdi" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Aciklama" Type="nvarchar" MaxLength="200" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Kitap">
+    <Key>
+      <PropertyRef Name="KitapID" />
+    </Key>
+    <Property Name="KitapID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ISBN" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="KitapAdi" Type="nvarchar" MaxLength="200" Nullable="false" />
+    <Property Name="YazarAd" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="YazarSoyad" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="YayinEviAdi" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="KategoriID" Type="int" Nullable="false" />
+    <Property Name="RafNumarasi" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="AdetSayisi" Type="int" Nullable="false" />
+    <Property Name="AktifMi" Type="bit" />
+    <Property Name="SayfaSayisi" Type="int" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+    <Property Name="GuncellemeTarihi" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Odunc">
+    <Key>
+      <PropertyRef Name="OduncID" />
+    </Key>
+    <Property Name="OduncID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="KitapID" Type="int" Nullable="false" />
+    <Property Name="OgrenciID" Type="int" Nullable="false" />
+    <Property Name="PersonelID" Type="int" Nullable="false" />
+    <Property Name="OduncAlmaTarihi" Type="datetime" Nullable="false" />
+    <Property Name="IadeTarihi" Type="datetime" />
+    <Property Name="TeslimAlindiMi" Type="bit" />
+    <Property Name="Aciklama" Type="nvarchar(max)" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+    <Property Name="GuncellemeTarihi" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Ogrenci">
+    <Key>
+      <PropertyRef Name="OgrenciID" />
+    </Key>
+    <Property Name="OgrenciID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ad" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Soyad" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="OgrenciNo" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="BolumID" Type="int" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="100" />
+    <Property Name="Telefon" Type="nvarchar" MaxLength="20" />
+    <Property Name="SilindiMi" Type="bit" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+    <Property Name="GuncellemeTarihi" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Personel">
+    <Key>
+      <PropertyRef Name="PersonelID" />
+    </Key>
+    <Property Name="PersonelID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Ad" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Soyad" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Sifre" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="AdminMi" Type="bit" Nullable="false" />
+    <Property Name="AktifMi" Type="bit" Nullable="false" />
+    <Property Name="OlusturmaTarihi" Type="datetime" />
+    <Property Name="GuncellemeTarihi" Type="datetime" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" />
+    <Property Name="definition" Type="varbinary(max)" />
+  </EntityType>
+  <Association Name="FK__Kitap__KategoriI__4D94879B">
+    <End Role="Kategori" Type="Self.Kategori" Multiplicity="1" />
+    <End Role="Kitap" Type="Self.Kitap" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Kategori">
+        <PropertyRef Name="KategoriID" />
+      </Principal>
+      <Dependent Role="Kitap">
+        <PropertyRef Name="KategoriID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Odunc__KitapID__5441852A">
+    <End Role="Kitap" Type="Self.Kitap" Multiplicity="1" />
+    <End Role="Odunc" Type="Self.Odunc" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Kitap">
+        <PropertyRef Name="KitapID" />
+      </Principal>
+      <Dependent Role="Odunc">
+        <PropertyRef Name="KitapID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Odunc__OgrenciID__5535A963">
+    <End Role="Ogrenci" Type="Self.Ogrenci" Multiplicity="1" />
+    <End Role="Odunc" Type="Self.Odunc" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Ogrenci">
+        <PropertyRef Name="OgrenciID" />
+      </Principal>
+      <Dependent Role="Odunc">
+        <PropertyRef Name="OgrenciID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Odunc__PersonelI__5629CD9C">
+    <End Role="Personel" Type="Self.Personel" Multiplicity="1" />
+    <End Role="Odunc" Type="Self.Odunc" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Personel">
+        <PropertyRef Name="PersonelID" />
+      </Principal>
+      <Dependent Role="Odunc">
+        <PropertyRef Name="PersonelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Ogrenci__BolumID__4316F928">
+    <End Role="Bolum" Type="Self.Bolum" Multiplicity="1" />
+    <End Role="Ogrenci" Type="Self.Ogrenci" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Bolum">
+        <PropertyRef Name="BolumID" />
+      </Principal>
+      <Dependent Role="Ogrenci">
+        <PropertyRef Name="BolumID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="KutuphaneOtomasyon3ModelStoreContainer">
+    <EntitySet Name="Bolum" EntityType="Self.Bolum" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Kategori" EntityType="Self.Kategori" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Kitap" EntityType="Self.Kitap" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Odunc" EntityType="Self.Odunc" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Ogrenci" EntityType="Self.Ogrenci" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Personel" EntityType="Self.Personel" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__Kitap__KategoriI__4D94879B" Association="Self.FK__Kitap__KategoriI__4D94879B">
+      <End Role="Kategori" EntitySet="Kategori" />
+      <End Role="Kitap" EntitySet="Kitap" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Odunc__KitapID__5441852A" Association="Self.FK__Odunc__KitapID__5441852A">
+      <End Role="Kitap" EntitySet="Kitap" />
+      <End Role="Odunc" EntitySet="Odunc" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Odunc__OgrenciID__5535A963" Association="Self.FK__Odunc__OgrenciID__5535A963">
+      <End Role="Ogrenci" EntitySet="Ogrenci" />
+      <End Role="Odunc" EntitySet="Odunc" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Odunc__PersonelI__5629CD9C" Association="Self.FK__Odunc__PersonelI__5629CD9C">
+      <End Role="Personel" EntitySet="Personel" />
+      <End Role="Odunc" EntitySet="Odunc" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Ogrenci__BolumID__4316F928" Association="Self.FK__Ogrenci__BolumID__4316F928">
+      <End Role="Bolum" EntitySet="Bolum" />
+      <End Role="Ogrenci" EntitySet="Ogrenci" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,211 @@
+﻿@model KütüphaneOtomasyonu.DataModel.Kakitap
+
+@{
+    ViewBag.Title = "Ogrenciler";
+}
+
+<h2>Ogrenciler</h2>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* Başlık stili */
+    h2 {
+        color: #333;
+        font-family: Arial, sans-serif;
+    }
+</style>
+<style>
+    .forms-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 20px;
+        margin: 40px auto;
+        max-width: 100%;
+    }
+
+    .form-card {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        width: 300px;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', sans-serif;
+        flex-shrink: 0;
+    }
+
+        .form-card form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-card label {
+            font-weight: bold;
+        }
+
+        .form-card input,
+        .form-card select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+            .form-card input[type="submit"] {
+                background-color: #007acc;
+                color: white;
+                border: none;
+                padding: 10px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+                .form-card input[type="submit"]:hover {
+                    background-color: #005fa3;
+                }
+
+        .form-card h3 {
+            text-align: center;
+            color: #333;
+        }
+
+    .guncelle-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="forms-wrapper">
+    <div class="form-card">
+        <h3>Kitap Ekle</h3>
+        <form action="/Home/Ogrenciler" method="post">
+            <label>Öğrenci Adı :</label>
+            <input type="text" name="oAD" maxlength="50" />
+            <label>Öğrenci SoyAd :</label>
+            <input type="text" name="oSoyad" maxlength="50" />
+            <label>Öğrenci No : </label>
+            <input type="number" name="oNO" maxlength="20" />
+            <label>Bölüm :</label>
+            <select name="BolumAdi">
+                <option disabled selected>Bölüm Seçiniz.</option>
+                @foreach (var item in Model.Bolums)
+                {
+                    <option>@item.BolumAdi</option>
+                }
+            </select>
+
+            <label>Email : </label>
+            <input type="email" name="oEmail" maxlength="100" />
+            <label>Telefon : </label>
+            <input type="tel" name="oTel" maxlength="20" />
+            <input type="submit" name="OgrenciEkle" value="Ekle" />
+        </form>
+    </div>
+
+    <div class="form-card">
+        <h3>Bölüm Ekle</h3>
+        <form action="/Home/Ogrenciler" method="post">
+            <label>Bölüm Ad :</label>
+            <input type="text" name="BolumAdi" maxlength="100" />
+            <input type="submit" name="BolumEkle" value="Ekle" />
+        </form>
+    </div>
+
+    @if (Model.seciliOgrenci != null)
+    {
+        <div class="form-card">
+            <h3>Öğrenci Güncelle</h3>
+            <form action="/Home/Ogrenciler" method="post">
+                <input type="hidden" name="OgrID" value="@Model.seciliOgrenci.OgrenciNo" />
+                <label>Öğrenci Adı :</label>
+                <input type="text" name="oAD" maxlength="50" value="@Model.seciliOgrenci.Ad" />
+                <label>Personel SoyAd :</label>
+                <input type="text" name="oSoyad" maxlength="50" value="@Model.seciliOgrenci.Soyad" />
+                <label>Bölüm Adı :</label>
+                <select name="BolumAdi">
+                    <option disabled selected>@Model.seciliOgrenci.Bolum.BolumAdi</option>
+                    @foreach (var item in Model.Bolums)
+                    {
+                        <option>@item.BolumAdi</option>
+                    }
+                </select>
+                <label>Email : </label>
+                <input type="email" name="oEmail" maxlength="100" value="@Model.seciliOgrenci.Email" />
+                <label>Şifre : </label>
+                <input type="password" name="oTel" maxlength="100" value="@Model.seciliOgrenci.Telefon" />
+                <input type="submit" name="pGuncelle" value="Güncelle" />
+            </form>
+        </div>
+    }
+</div>
+
+<table>
+    <tr>
+        <td>Öğrenci Ad</td>
+        <td>öğrenci Soyad</td>
+        <td>Öğrenci No</td>
+        <td>Bölüm Adı</td>
+        <td>Email</td>
+        <td>Telefon</td>
+        <td>Oluşturma Tarihi</td>
+        <td>Güncelleme Tarihi</td>
+        <td>İşlemler</td>
+    </tr>
+    @foreach (var item in Model.Ogrencis)
+    {
+        if (@item.SilindiMi == false)
+        {
+            <tr style="height:auto">
+                <td style="width:auto">@item.Ad</td>
+                <td>@item.Soyad</td>
+                <td>@item.OgrenciNo</td>
+                <td>@item.Bolum.BolumAdi</td>
+                <td>@item.Email</td>
+                <td>@item.Telefon</td>
+                <td>@item.OlusturmaTarihi</td>
+                <td>@item.GuncellemeTarihi</td>
+
+                <td>
+                    <form action="/Home/Ogrenciler" method="post">
+                        <input type="hidden" name="oNo" value="@item.OgrenciNo" />
+                        <input type="submit" name="OgrBul" value="Bul" />
+                    </form>
+                    <form action="/Home/Ogrenciler" method="post">
+                        <input type="hidden" name="oID" value="@item.OgrenciID" />
+                        <input type="submit" name="OgrSil" value="Sil" />
+                    </form>
+                </td>
+            </tr>
+        }
+    }
+</table>
