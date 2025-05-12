@@ -265,6 +265,7 @@ namespace KütüphaneOtomasyonu.Controllers
             {
                 Kdepo.BolumAdi = fc["BolumAdi"];
                 Kdepo.OlusturmaTarihi = DateTime.Now;
+                Kdepo.AktifMi = true;
                 db.Bolums.Add(Kdepo);
                 db.SaveChanges();
                 return RedirectToAction("Ogrenciler");
