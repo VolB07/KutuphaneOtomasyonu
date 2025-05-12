@@ -1,161 +1,287 @@
 ﻿@model KütüphaneOtomasyonu.DataModel.Kakitap
 @{
-    ViewBag.Title = "Oduncver";
+    ViewBag.Title = "Ödünç İşlemleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Oduncver</h2>
-<div class="forms-wrapper">
-    <div class="form-card">
-        <h3>Kitap Ekle</h3>
-        <form action="/Home/Oduncver" method="post">
-            <label>Kitap Adı :</label>
-            <select name="KitapAdi">
-                <option disabled selected>Kitap Seçiciz.</option>
-                @foreach (var item in Model.Kitaps)
-                {
-                    if (@item.AktifMi == true)
-                    {
-                        <option>@item.KitapAdi</option>
-                    }
-                }
-            </select>
-            <label>Öğrenci Adı :</label>
-            <select name="OgrenciAdi">
-                <option disabled selected>Bölüm Seçiniz.</option>
-                @foreach (var item in Model.Ogrencis)
-                {
-                    if (@item.SilindiMi == false)
-                    {
-                        <option>@item.Ad</option>
-                    }
-                }
-            </select>
-            <label>Personel Adı :</label>
-            <select name="PersonelAdi">
-                <option disabled selected>Bölüm Seçiniz.</option>
-                @foreach (var item in Model.Personels)
-                {
-                    if (@item.AktifMi == true)
-                    {
-                        <option>@item.Ad</option>
-                    }
-                }
-            </select>
-            <label>Açıklama :</label>
-            <input type="text" name="acikla" />
-            <input type="submit" name="Odver" value="Ödünç ver" />
-        </form>
+@if (!string.IsNullOrEmpty(ViewBag.HataMesaji))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @ViewBag.HataMesaji
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">Ödünç İşlemleri Yönetimi</h2>
+
+    <!-- İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Alınacak Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Oduncs.Count(o => o.TeslimAlindiMi == false)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Teslim Alınmış Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Oduncs.Count(o => o.TeslimAlindiMi == true)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Gecikmiş Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Oduncs.Count(o => o.TeslimAlindiMi == false && o.IadeTarihi < DateTime.Now)</h2>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @if (Model.seciliodunc != null)
-    {
-        <div class="form-card">
-            <h3>Ödünç Güncelle</h3>
-            <form action="/Home/Oduncver" method="post">
-                <input type="hidden" name="OduncID" value="@Model.seciliodunc.OduncID" />
-                <label>Kitap Adı :</label>
-                <input type="hidden" name="KitID" value="@Model.seciliodunc.KitapID"/>
-                <select name="KitapAdi">
-                    <option disabled selected>@Model.seciliodunc.Kitap.KitapAdi</option>
-                    @foreach (var item in Model.Kitaps)
-                    {
-                        <option>@item.KitapAdi</option>
-                    }
-                </select>
-                <input type="hidden" name="OgrID" value="@Model.seciliodunc.OgrenciID"/>
-                <label>Öğrenci Adı :</label>
-                <select name="oAd">
-                    <option disabled selected>@Model.seciliodunc.Ogrenci.Ad</option>
-                    @foreach (var item in Model.Ogrencis)
-                    {
-                        <option>@item.Ad</option>
-                    }
-                </select>
-                <label>Personel Adı :</label>
-                <input type="hidden" name="PerID" value="@Model.seciliodunc.PersonelID"/>
-                <select name="PersonelAdi">
-                    <option disabled selected>@Model.seciliodunc.Personel.Ad</option>
-                    @foreach (var item in Model.Personels)
-                    {
-                        <option>@item.Ad</option>
-                    }
-                </select>
-                <label>aciklama</label>
-                <input type="text" name="Aciklama" value="@Model.seciliodunc.Aciklama" />
-                <input type="submit" name="OduncGuncelle" value="Güncelle" />
-            </form>
+    <!-- Ödünç Verme Formu -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-book me-2"></i>Yeni Ödünç Verme
+            </h5>
         </div>
-    }
+        <div class="card-body">
+            @using (Html.BeginForm("Oduncver", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
+            {
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="KitapAdi" name="KitapAdi" required>
+                                <option value="">Seçiniz</option>
+                                @foreach (var kitap in Model.Kitaps.Where(k => k.AktifMi == true))
+                                {
+                                    <option value="@kitap.KitapAdi">@kitap.KitapAdi</option>
+                                }
+                            </select>
+                            <label for="KitapAdi">Kitap</label>
+                            <div class="invalid-feedback">Lütfen bir kitap seçiniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="OgrenciAdi" name="OgrenciAdi" required>
+                                <option value="">Seçiniz</option>
+                                @foreach (var ogrenci in Model.Ogrencis.Where(o => o.SilindiMi != true))
+                                {
+                                    <option value="@ogrenci.Ad">@ogrenci.Ad @ogrenci.Soyad</option>
+                                }
+                            </select>
+                            <label for="OgrenciAdi">Öğrenci</label>
+                            <div class="invalid-feedback">Lütfen bir öğrenci seçiniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <select class="form-select" id="PersonelAdi" name="PersonelAdi" required>
+                                <option value="">Seçiniz</option>
+                                @foreach (var personel in Model.Personels.Where(p => p.AktifMi == true))
+                                {
+                                    <option value="@personel.Ad">@personel.Ad @personel.Soyad</option>
+                                }
+                            </select>
+                            <label for="PersonelAdi">Personel</label>
+                            <div class="invalid-feedback">Lütfen bir personel seçiniz.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" id="Acikla" name="Acikla" placeholder="Açıklama" style="height: 100px"></textarea>
+                            <label for="Acikla">Açıklama</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" name="Odver" value="Ödünç ver" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Ödünç Ver
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
 
+    <!-- Teslim Alma Bölümü -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-undo me-2"></i>Teslim Alma
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Kitap</th>
+                            <th>Öğrenci</th>
+                            <th>Ödünç Alma Tarihi</th>
+                            <th>İade Tarihi</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var odunc in Model.Oduncs.Where(o => o.TeslimAlindiMi == false))
+                        {
+                            var isGecikmis = odunc.IadeTarihi < DateTime.Now;
+                            var rowClass = isGecikmis ? "table-danger" : "table-primary";
+
+                            <tr class="@rowClass">
+                                <td>@odunc.Kitap.KitapAdi</td>
+                                <td>@odunc.Ogrenci.Ad @odunc.Ogrenci.Soyad</td>
+                                <td>@string.Format("{0:dd/MM/yyyy}", odunc.OduncAlmaTarihi)</td>
+                                <td>@string.Format("{0:dd/MM/yyyy}", odunc.IadeTarihi)</td>
+                                <td>
+                                    @if (isGecikmis)
+                                    {
+                                        <span class="badge bg-danger">Gecikmiş</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Teslim Alınacak</span>
+                                    }
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-success" onclick="teslimAl('@odunc.OduncID', '@odunc.Kitap.KitapAdi', '@odunc.Ogrenci.Ad @odunc.Ogrenci.Soyad')">
+                                        <i class="fas fa-check me-1"></i>Teslim Al
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ödünç Listesi -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Tüm Ödünç İşlemleri</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Kitap</th>
+                            <th>Öğrenci</th>
+                            <th>Personel</th>
+                            <th>Ödünç Alma Tarihi</th>
+                            <th>İade Tarihi</th>
+                            <th>Durum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var odunc in Model.Oduncs)
+                        {
+                            var rowClass = "";
+                            if (odunc.TeslimAlindiMi == true)
+                            {
+                                rowClass = "table-success";
+                            }
+                            else if (odunc.IadeTarihi < DateTime.Now)
+                            {
+                                rowClass = "table-danger";
+                            }
+                            else
+                            {
+                                rowClass = "table-primary";
+                            }
+
+                            <tr class="@rowClass">
+                                <td>@odunc.Kitap.KitapAdi</td>
+                                <td>@odunc.Ogrenci.Ad @odunc.Ogrenci.Soyad</td>
+                                <td>@odunc.Personel.Ad @odunc.Personel.Soyad</td>
+                                <td>@string.Format("{0:dd/MM/yyyy}", odunc.OduncAlmaTarihi)</td>
+                                <td>@string.Format("{0:dd/MM/yyyy}", odunc.IadeTarihi)</td>
+                                <td>
+                                    @if (odunc.TeslimAlindiMi == true)
+                                    {
+                                        <span class="badge bg-success">Teslim Alındı</span>
+                                    }
+                                    else if (odunc.IadeTarihi < DateTime.Now)
+                                    {
+                                        <span class="badge bg-danger">Gecikmiş</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Teslim Alınacak</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-   
+@section scripts {
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<table>
-    <tr>
-        <td>Kitap Adı</td>
-        <td>öğrenci Adı</td>
-        <td>Personel Adı</td>
-        <td>Ödünç alma tarihi</td>
-        <td>İade Tarihi</td>
-        <td>Teslim Alındı mı?</td>
-        <td>Kalan Gün</td>
-        <td>Aciklama</td>
-        <td>Oluşturma Tarihi</td>
-        <td>Güncelleme Tarihi</td>
-        <td>İşlemler</td>
-    </tr>
-    @foreach (var item in Model.Oduncs)
-    {
-        
-        <tr style="height:auto">
-            <td style="width:auto">@item.Kitap.KitapAdi</td>
-            <td>@item.Ogrenci.Ad</td>
-            <td>@item.Personel.Ad</td>
-            <td>@item.OduncAlmaTarihi</td>
-            <td>@item.IadeTarihi</td>
-            @if (item.KalanGun < 0)
-            {
-                <td><span style="color:red;">Gecikti</span></td>
-            }
-            else if (item.TeslimAlindiMi == false)
-            {
-                <td>Hayır</td>
-            }
-            else if (item.TeslimAlindiMi == true)
-            {
-                <td>Evet</td>
-            }
+    <script>
+        // Form validasyonu için
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
 
-            @if (item.KalanGun < 0)
-            {
-                <td>@item.KalanGun</td>
-            }
-            else if (item.TeslimAlindiMi == false)
-            {
-                <td>@item.KalanGun</td>
-            }
-            else if (item.TeslimAlindiMi == true)
-            {
-                <td>-</td>
-            }
-            <td>@item.Aciklama</td>
-            <td>@item.OlusturmaTarihi</td>
-            <td>@item.GuncellemeTarihi</td>
-            <td>
-                @*<form action="/Home/Oduncver" method="post">
-                <input type="hidden" name="oduncID" value="@item.OduncID"/>
-                <input type="submit" name="oduncsil" value="Sil" />
-            </form>*@
-                <form action="/Home/Oduncver" method="post">
-                    <input type="hidden" name="oduncID" value="@item.OduncID" />
-                    <input type="submit" name="OduncBul" value="Bul" />
-                </form>
-                <form action="/Home/Oduncver" method="post">
-                    <input type="hidden" name="tesID" value="@item.OduncID" />
-                    <input type="submit" name="teslim" value="Teslim Edildi" />
-                </form>
-            </td>
-        </tr>
-    }
-</table>
+        function teslimAl(oduncId, kitapAdi, ogrenciAdSoyad) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                html: `<strong>${kitapAdi}</strong> kitabını <strong>${ogrenciAdSoyad}</strong> öğrencisinden teslim almak istediğinizden emin misiniz?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Evet, teslim al!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Teslim alma formunu oluştur ve gönder
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '@Url.Action("Oduncver", "Home")';
+
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'tesID';
+                    idInput.value = oduncId;
+
+                    const teslimInput = document.createElement('input');
+                    teslimInput.type = 'hidden';
+                    teslimInput.name = 'teslim';
+                    teslimInput.value = 'Teslim Edildi';
+
+                    form.appendChild(idInput);
+                    form.appendChild(teslimInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}

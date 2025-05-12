@@ -1,0 +1,450 @@
+/* Reset and Base Styles */
+.about-page {
+    --primary-color: #8b85ff;
+    --secondary-color: #6c63ff;
+    --text-color: #f8f9fa;
+    --bg-color: #0a0a0a;
+    --card-bg: rgba(20, 20, 20, 0.9);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    --transition: all 0.3s ease;
+}
+
+/* About Page Specific Styles */
+.about-page {
+    position: relative;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: var(--transition);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Background Animation */
+.about-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(45deg, var(--primary-color) 0%, transparent 100%),
+        radial-gradient(circle at 50% 50%, var(--secondary-color) 0%, transparent 50%);
+    opacity: 0.15;
+    z-index: 1;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Stars Animation */
+.about-page .stars-section {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.about-page .stars-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.about-page .star {
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    opacity: var(--opacity);
+    animation: twinkle var(--duration) linear infinite,
+               moveStar 20s linear infinite;
+}
+
+/* Content Container */
+.about-page .about-page-content {
+    position: relative;
+    z-index: 3;
+    padding: 2rem;
+}
+
+/* Intro Animation */
+.about-page .intro-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeOut 2s ease-in-out forwards;
+    animation-delay: 2s;
+}
+
+.about-page .logo-container {
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+.about-page .logo {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 0.5rem;
+    margin-bottom: 1rem;
+    transform: translateY(20px);
+    animation: slideUp 1s ease-in-out forwards;
+    text-shadow: 0 0 20px rgba(108, 99, 255, 0.5);
+}
+
+.about-page .slogan {
+    font-size: 1.5rem;
+    color: var(--text-color);
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+    animation-delay: 0.5s;
+}
+
+/* Hero Section */
+.about-page .hero {
+    text-align: center;
+    margin: 4rem 0;
+}
+
+.about-page .hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 1s ease-in-out forwards;
+}
+
+.about-page .hero .subtitle {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideUp 1s ease-in-out forwards;
+    animation-delay: 0.3s;
+}
+
+/* Team Grid */
+.about-page .team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 4rem 0;
+}
+
+/* Team Cards */
+.about-page .team-card {
+    background: var(--card-bg);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(10px);
+    transition: var(--transition);
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.about-page .team-card.visible {
+    animation: slideUp 0.5s ease-in-out forwards;
+}
+
+.about-page .team-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+}
+
+.about-page .card-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.about-page .profile-image {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary-color);
+    transition: var(--transition);
+}
+
+.about-page .team-card:hover .profile-image {
+    transform: scale(1.1);
+    border-color: var(--secondary-color);
+}
+
+.about-page .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.about-page .team-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.about-page .role {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.about-page .bio {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+}
+
+/* Social Links */
+.about-page .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.about-page .social-icon {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    transition: var(--transition);
+}
+
+.about-page .social-icon:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px);
+}
+
+/* Modal */
+.about-page .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.about-page .modal-content {
+    position: relative;
+    background: var(--card-bg);
+    width: 90%;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--card-shadow);
+    animation: modalSlideIn 0.3s ease-in-out;
+}
+
+.about-page .close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: var(--transition);
+}
+
+.about-page .close-modal:hover {
+    color: var(--primary-color);
+    transform: rotate(90deg);
+}
+
+/* Animations */
+@keyframes twinkle {
+    0%, 100% { opacity: var(--opacity); }
+    50% { opacity: calc(var(--opacity) * 0.5); }
+}
+
+@keyframes moveStar {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(var(--move-x)); }
+}
+
+@keyframes gradientShift {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-page .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .about-page .hero .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .about-page .team-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .about-page .modal-content {
+        width: 95%;
+        margin: 1rem auto;
+    }
+}
+
+/* Scroll Reveal Animation */
+.about-page .reveal-text {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.about-page .reveal-text.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Data Flow Effect */
+.data-flow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.team-card:hover .data-flow {
+    opacity: 1;
+}
+
+/* Remove old circuit animation styles */
+.circuit-animation,
+.circuit-container,
+.circuit-line {
+    display: none;
+}
+
+/* Holographic Effect */
+.holographic-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(108, 99, 255, 0.3);
+    z-index: 1001;
+    opacity: 0;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.holographic-content.visible {
+    opacity: 1;
+    animation: hologramFloat 3s ease-in-out infinite;
+}
+
+@keyframes hologramFloat {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-10px); }
+}
+
+/* Light Beams */
+.light-beam {
+    position: absolute;
+    width: 2px;
+    height: 0;
+    background: linear-gradient(to top, transparent, var(--primary-color), transparent);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.light-beam.active {
+    animation: beamShoot 1s ease-out forwards;
+}
+
+@keyframes beamShoot {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.8;
+    }
+    100% {
+        height: 100vh;
+        opacity: 0;
+    }
+}
+
+/* Holographic Text */
+.holographic-text {
+    color: rebeccapurple;
+    text-shadow: 0 0 10px rebeccapurple;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.holographic-text.visible {
+    animation: textAppear 0.5s ease-out forwards;
+}
+
+@keyframes textAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

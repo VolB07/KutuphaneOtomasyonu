@@ -1,245 +1,275 @@
 ﻿@model KütüphaneOtomasyonu.DataModel.Kakitap
 @{
     ViewBag.Title = "Kitaplar";
-}
-<style>
-    /* Genel tablo stili */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    th, td {
-        padding: 12px;
-        text-align: left;
-        border: 1px solid #ddd;
-    }
-
-    th {
-        background-color: #f4f4f4;
-        font-weight: bold;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-
-    /* Başlık stili */
-    h2 {
-        color: #333;
-        font-family: Arial, sans-serif;
-    }
-</style>
-<style>
-    .forms-wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        gap: 20px;
-        margin: 40px auto;
-        max-width: 100%;
-    }
-
-    .form-card {
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        padding: 20px;
-        width: 300px;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', sans-serif;
-        flex-shrink: 0;
-    }
-
-        .form-card form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .form-card label {
-            font-weight: bold;
-        }
-
-        .form-card input,
-        .form-card select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-            width: 100%;
-        }
-
-            .form-card input[type="submit"] {
-                background-color: #007acc;
-                color: white;
-                border: none;
-                padding: 10px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background-color 0.3s;
-            }
-
-                .form-card input[type="submit"]:hover {
-                    background-color: #005fa3;
-                }
-
-        .form-card h3 {
-            text-align: center;
-            color: #333;
-        }
-
-    .guncelle-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 20px;
-    }
-</style>
-
-@if (ViewBag.HataMesaji != null)
-{
-    <div class="alert alert-danger">@ViewBag.HataMesaji</div>
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="forms-wrapper">
-    <div class="form-card">
-        <h3>Kitap Ekle</h3>
-        <form action="/Home/Kitaplar" method="post">
-            <label>ISBN :</label>
-            <input type="number" name="ISBN" maxlength="20" />
-            <label>Kitap Adı :</label>
-            <input type="text" name="KitapAdi" maxlength="200" />
-            <label>Yazar Ad :</label>
-            <input type="text" name="YazarAd" maxlength="50" />
-            <label>Yazar Soyad :</label>
-            <input type="text" name="YazarSoyad" maxlength="50" />
-            <label>YayınEvi Adı :</label>
-            <input type="text" name="YayinEviAdi" maxlength="100" />
-            <label>Kategori :</label>
-            <select name="KategoriAdi">
-                <option disabled selected>Kategori Seçiniz.</option>
-                @foreach (var item in Model.Kategoris)
-                {
-                    <option>@item.KategoriAdi</option>
-                }
-            </select>
-            <label>Raf Numarası :</label>
-            <input type="text" name="RafNumarasi" maxlength="20" />
-            <label>Adet Sayısı :</label>
-            <input type="number" name="AdetSayisi" />
-            <label>Sayfa Sayısı :</label>
-            <input type="number" name="SayfaSayisi" />
-            <input type="submit" name="KitapEkle" value="Ekle" />
-        </form>
-    </div>
+<div class="container-fluid">
+    <h2 class="mb-4">Kitap Yönetimi</h2>
 
-    <div class="form-card">
-        <h3>Kategori Ekle</h3>
-        <form action="/Home/Kitaplar" method="post">
-            <label>Kategori Ad :</label>
-            <input type="text" name="KategoriAdi" maxlength="100" />
-            <label>Açıklama :</label>
-            <input type="text" name="Aciklama" maxlength="200" />
-            <input type="submit" name="KategoriEkle" value="Ekle" />
-        </form>
-    </div>
-
-
-    @if (Model.SeciliKitap != null)
-    {
-        <div class="form-card">
-            <h3>Kitap Güncelle</h3>
-            <form action="/Home/Kitaplar" method="post">
-                <label>ISBN :</label>
-                <input type="number" name="ISBN" value="@Model.SeciliKitap.ISBN" maxlength="20" />
-                <label>Kitap Adı :</label>
-                <input type="text" name="KitapAdi" value="@Model.SeciliKitap.KitapAdi" maxlength="200" />
-                <label>Yazar Ad :</label>
-                <input type="text" name="YazarAd" value="@Model.SeciliKitap.YazarAd" maxlength="50" />
-                <label>Yazar Soyad :</label>
-                <input type="text" name="YazarSoyad" value="@Model.SeciliKitap.YazarSoyad" maxlength="50" />
-                <label>YayınEvi Adı :</label>
-                <input type="text" name="YayinEviAdi" value="@Model.SeciliKitap.YayinEviAdi" maxlength="100" />
-                <label>Kategori : </label>
-                <select name="KategoriAdi">
-                    <option disabled selected>@Model.SeciliKitap.Kategori.KategoriAdi</option>
-                    @foreach (var item in Model.Kategoris)
-                    {
-                        <option>@item.KategoriAdi</option>
-                    }
-                </select>
-                <label>Raf Numarası :</label>
-                <input type="text" name="RafNumarasi" value="@Model.SeciliKitap.RafNumarasi" maxlength="20" />
-                <label>Adet Sayısı :</label>
-                <input type="number" name="AdetSayisi" value="@Model.SeciliKitap.AdetSayisi" />
-                <label>Sayfa Sayısı :</label>
-                <input type="number" name="SayfaSayisi" value="@Model.SeciliKitap.SayfaSayisi" />
-                <input type="submit" name="guncel" value="dene" />
-            </form>
+    <!-- İstatistik Kartları -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Stoktaki Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Kitaps.Where(k => k.AktifMi == true).Sum(k => k.AdetSayisi)</h2>
+                </div>
+            </div>
         </div>
-    }
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Son 1 Haftada Eklenen Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Kitaps.Count(k => k.AktifMi == true && k.OlusturmaTarihi >= DateTime.Now.AddDays(-7))</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Silinen Kitap Sayısı</h5>
+                    <h2 class="card-text">@Model.Kitaps.Count(k => k.AktifMi == false)</h2>
+                </div>
+            </div>
+        </div>
     </div>
-    
 
-
-
-@if (Model != null && Model.Kitaps.Any())
-{
-    <table>
-        <tr>
-            <td>ISBN</td>
-            <td>Kitap Adı</td>
-            <td>Yazar Ad</td>
-            <td>Yazar Soyad</td>
-            <td>YayınEvi Adı</td>
-            <td>Kategori</td>
-            <td>Raf Numarası</td>
-            <td>Adet Sayısı</td>
-            <td>Sayfa Sayısı</td>
-            <td>OlusturmaTarihi</td>
-            <td>GuncellemeTarihi</td>
-            <td>Düzenle</td>
-        </tr>
-        @foreach (var item in Model.Kitaps)
-        {
-            if (item.AktifMi == true)
+    <!-- Kitap Ekleme/Düzenleme Formu -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-book me-2"></i>Kitap Bilgileri
+            </h5>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("Kitaplar", "Home", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
             {
-                <tr height="35px">
-                    <td width="35px">@item.ISBN</td>
-                    <td>@item.KitapAdi</td>
-                    <td>@item.YazarAd</td>
-                    <td>@item.YazarSoyad</td>
-                    <td>@item.YayinEviAdi</td>
-                    <td>@item.Kategori.KategoriAdi</td>
-                    <td>@item.RafNumarasi</td>
-                    <td>@item.AdetSayisi</td>
-                    <td>@item.SayfaSayisi</td>
-                    <td>@item.OlusturmaTarihi</td>
-                    <td>@item.GuncellemeTarihi</td>
-                    <td>
-                        <form action="/Home/Kitaplar" method="post">
-                            <input type="hidden" name="ISBN" value="@item.ISBN" />
-                            <input type="submit" name="KitapSil" value="Sil" />
-                        </form>
-                        <form action="/Home/Kitaplar" method="post">
-                            <input type="hidden" name="ISBN" value="@item.ISBN" />
-                            <input type="submit" name="Buls" value="Bul" />
-                        </form>
-                    </td>
-                        
-                    
-                </tr>
+                <input type="hidden" id="kitapID" name="KitapID" />
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="ISBN" name="ISBN" placeholder="ISBN" required>
+                            <label for="ISBN">ISBN</label>
+                            <div class="invalid-feedback">Lütfen ISBN numarasını giriniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="KitapAdi" name="KitapAdi" placeholder="Kitap Adı" required>
+                            <label for="KitapAdi">Kitap Adı</label>
+                            <div class="invalid-feedback">Lütfen kitap adını giriniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="YazarAd" name="YazarAd" placeholder="Yazar Adı" required>
+                            <label for="YazarAd">Yazar Adı</label>
+                            <div class="invalid-feedback">Lütfen yazar adını giriniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="YazarSoyad" name="YazarSoyad" placeholder="Yazar Soyadı" required>
+                            <label for="YazarSoyad">Yazar Soyadı</label>
+                            <div class="invalid-feedback">Lütfen yazar soyadını giriniz.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="YayinEviAdi" name="YayinEviAdi" placeholder="Yayınevi" required>
+                            <label for="YayinEviAdi">Yayınevi</label>
+                            <div class="invalid-feedback">Lütfen yayınevi adını giriniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <select class="form-select" id="KategoriAdi" name="KategoriAdi" required>
+                                <option value="">Seçiniz</option>
+                                @foreach (var kategori in Model.Kategoris)
+                                {
+                                    <option value="@kategori.KategoriAdi">@kategori.KategoriAdi</option>
+                                }
+                            </select>
+                            <label for="KategoriAdi">Kategori</label>
+                            <div class="invalid-feedback">Lütfen bir kategori seçiniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="RafNumarasi" name="RafNumarasi" placeholder="Raf Numarası" required>
+                            <label for="RafNumarasi">Raf Numarası</label>
+                            <div class="invalid-feedback">Lütfen raf numarasını giriniz.</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="AdetSayisi" name="AdetSayisi" placeholder="Adet Sayısı" min="1" required>
+                            <label for="AdetSayisi">Adet Sayısı</label>
+                            <div class="invalid-feedback">Lütfen geçerli bir adet sayısı giriniz.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="SayfaSayisi" name="SayfaSayisi" placeholder="Sayfa Sayısı" min="1" required>
+                            <label for="SayfaSayisi">Sayfa Sayısı</label>
+                            <div class="invalid-feedback">Lütfen geçerli bir sayfa sayısı giriniz.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" name="KitapEkle" value="Ekle" class="btn btn-primary" id="btnKaydet">
+                        <i class="fas fa-save me-2"></i>Kaydet
+                    </button>
+                    <button type="submit" name="guncel" value="dene" class="btn btn-info" id="btnGuncelle" style="display: none;">
+                        <i class="fas fa-save me-2"></i>Güncelle
+                    </button>
+                    <button type="reset" class="btn btn-secondary ms-2" onclick="formTemizle()">
+                        <i class="fas fa-undo me-2"></i>Temizle
+                    </button>
+                </div>
             }
+        </div>
+    </div>
+
+    <!-- Kitap Listesi -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Kitap Listesi</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Kitap Adı</th>
+                            <th>Yazar</th>
+                            <th>Kategori</th>
+                            <th>Raf No</th>
+                            <th>Sayfa</th>
+                            <th>Adet</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var kitap in Model.Kitaps.Where(k => k.AktifMi == true))
+                        {
+                            <tr>
+                                <td>@kitap.ISBN</td>
+                                <td>@kitap.KitapAdi</td>
+                                <td>@kitap.YazarAd @kitap.YazarSoyad</td>
+                                <td>@kitap.Kategori.KategoriAdi</td>
+                                <td>@kitap.RafNumarasi</td>
+                                <td>@kitap.SayfaSayisi</td>
+                                <td>@kitap.AdetSayisi</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info" onclick="kitapGuncelle('@kitap.ISBN', '@kitap.KitapAdi', '@kitap.YazarAd', '@kitap.YazarSoyad', '@kitap.YayinEviAdi', '@kitap.Kategori.KategoriAdi', '@kitap.RafNumarasi', '@kitap.AdetSayisi', '@kitap.SayfaSayisi')">
+                                        <i class="fas fa-edit me-1"></i>Güncelle
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="kitapSil('@kitap.ISBN', '@kitap.KitapAdi')">
+                                        <i class="fas fa-trash me-1"></i>Sil
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Form validasyonu için
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+
+        function kitapGuncelle(isbn, kitapAdi, yazarAd, yazarSoyad, yayinEviAdi, kategoriAdi, rafNumarasi, adetSayisi, sayfaSayisi) {
+            // Form alanlarını doldur
+            document.getElementById('ISBN').value = isbn;
+            document.getElementById('KitapAdi').value = kitapAdi;
+            document.getElementById('YazarAd').value = yazarAd;
+            document.getElementById('YazarSoyad').value = yazarSoyad;
+            document.getElementById('YayinEviAdi').value = yayinEviAdi;
+            document.getElementById('KategoriAdi').value = kategoriAdi;
+            document.getElementById('RafNumarasi').value = rafNumarasi;
+            document.getElementById('AdetSayisi').value = adetSayisi;
+            document.getElementById('SayfaSayisi').value = sayfaSayisi;
+
+            // Butonları güncelle
+            document.getElementById('btnKaydet').style.display = 'none';
+            document.getElementById('btnGuncelle').style.display = 'inline-block';
+
+            // Sayfayı form alanına kaydır
+            document.querySelector('.card.mb-4').scrollIntoView({ behavior: 'smooth' });
         }
-    </table>
+
+        function formTemizle() {
+            // Form alanlarını temizle
+            document.querySelector('form').reset();
+
+            // Butonları sıfırla
+            document.getElementById('btnKaydet').style.display = 'inline-block';
+            document.getElementById('btnGuncelle').style.display = 'none';
+
+            // Validasyon sınıfını kaldır
+            document.querySelector('form').classList.remove('was-validated');
+        }
+
+        function kitapSil(isbn, kitapAdi) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                html: `<strong>${kitapAdi}</strong> kitabını silmek istediğinizden emin misiniz?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Evet, sil!',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Silme formunu oluştur ve gönder
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '@Url.Action("Kitaplar", "Home")';
+
+                    const isbnInput = document.createElement('input');
+                    isbnInput.type = 'hidden';
+                    isbnInput.name = 'ISBN';
+                    isbnInput.value = isbn;
+
+                    const silInput = document.createElement('input');
+                    silInput.type = 'hidden';
+                    silInput.name = 'KitapSil';
+                    silInput.value = 'Sil';
+
+                    form.appendChild(isbnInput);
+                    form.appendChild(silInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
 }
-else
-{
-    <p>Gösterilecek kitap yok.</p>
-}
+
