@@ -103,6 +103,12 @@
     }
 </style>
 
+@if (ViewBag.HataMesaji != null)
+{
+    <div class="alert alert-danger">@ViewBag.HataMesaji</div>
+}
+
+
 <div class="forms-wrapper">
     <div class="form-card">
         <h3>Kitap Ekle</h3>
@@ -119,7 +125,7 @@
         </form>
     </div>
 
-   
+
 
     @if (Model.secilipersonel != null)
     {
@@ -170,7 +176,7 @@
                         <input type="submit" name="perBul" value="Bul" />
                     </form>
                     <form action="/Home/Personeller" method="post">
-                        <input type="hidden" name="PersonelID" value="@item.PersonelID"/>
+                        <input type="hidden" name="PersonelID" value="@item.PersonelID" />
                         <input type="submit" name="PersonelSil" value="Sil" />
                     </form>
                 </td>
