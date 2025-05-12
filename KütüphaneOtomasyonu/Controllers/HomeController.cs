@@ -47,109 +47,121 @@ namespace KütüphaneOtomasyonu.Controllers
             return View(_kakitap);
         }
         [HttpPost]
-        public ActionResult Kitaplar(FormCollection fc)
-        {
-            Kitap depo = new Kitap();
-            Kategori kdepo = new Kategori();
+public ActionResult Kitaplar(FormCollection fc)
+{
+    try
+    {
+        Kitap depo = new Kitap();
+        Kategori kdepo = new Kategori();
 
-            if (fc["KitapEkle"] == "Ekle")
+        if (fc["KitapEkle"] == "Ekle")
+        {
+            depo.ISBN = fc["ISBN"];
+            depo.KitapAdi = fc["KitapAdi"];
+            depo.YazarAd = fc["YazarAd"];
+            depo.YazarSoyad = fc["YazarSoyad"];
+            depo.YayinEviAdi = fc["YayinEviAdi"];
+            var Kisim = fc["KategoriAdi"];
+            var kat = db.Kategoris.FirstOrDefault(k => k.KategoriAdi == Kisim);
+            if (kat != null)
             {
-                depo.ISBN = fc["ISBN"];
-                depo.KitapAdi = fc["KitapAdi"];
-                depo.YazarAd = fc["YazarAd"];
-                depo.YazarSoyad = fc["YazarSoyad"];
-                depo.YayinEviAdi = fc["YayinEviAdi"];
+                int katID = kat.KategoriID;
+                depo.KategoriID = katID;
+            }
+            depo.RafNumarasi = fc["RafNumarasi"];
+            depo.AdetSayisi = Convert.ToInt32(fc["AdetSayisi"]);
+            depo.SayfaSayisi = Convert.ToInt32(fc["SayfaSayisi"]);
+
+            depo.AktifMi = true;
+            depo.OlusturmaTarihi = DateTime.Now;
+            depo.GuncellemeTarihi = null;
+
+            db.Kitaps.Add(depo);
+            db.SaveChanges();
+            return RedirectToAction("Kitaplar");
+        }
+
+        if (fc["KategoriEkle"] == "Ekle")
+        {
+            kdepo.KategoriAdi = fc["KategoriAdi"];
+            kdepo.Aciklama = fc["Aciklama"];
+            kdepo.OlusturmaTarihi = DateTime.Now;
+            db.Kategoris.Add(kdepo);
+            db.SaveChanges();
+            return RedirectToAction("Kitaplar");
+        }
+
+        if (fc["KitapSil"] == "Sil")
+        {
+            var aranankitap = fc["ISBN"];
+            var kitap = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == aranankitap);
+            if (kitap != null)
+            {
+                kitap.AktifMi = false;
+                kitap.GuncellemeTarihi = DateTime.Now;
+                db.SaveChanges();
+            }
+        }
+
+        if (fc["Buls"] == "Bul")
+        {
+            var arananVeri = fc["ISBN"];
+            var kod = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == arananVeri);
+
+            var model = new Kakitap
+            {
+                ISBN = arananVeri,
+                SeciliKitap = kod,
+                Kitaps = db.Kitaps.ToList(),
+                Kategoris = db.Kategoris.ToList()
+            };
+            return View(model);
+        }
+
+        if (fc["guncel"] == "dene")
+        {
+
+            var aranankitap = fc["ISBN"];
+            var guncelle = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == aranankitap);
+            if (guncelle != null)
+            {
+                guncelle.KitapAdi = fc["KitapAdi"];
+                guncelle.YazarAd = fc["YazarAd"];
+                guncelle.YazarSoyad = fc["YazarSoyad"];
+                guncelle.YayinEviAdi = fc["YayinEviAdi"];
                 var Kisim = fc["KategoriAdi"];
                 var kat = db.Kategoris.FirstOrDefault(k => k.KategoriAdi == Kisim);
                 if (kat != null)
                 {
-                    int katID = kat.KategoriID;
-                    depo.KategoriID = katID;
+                    guncelle.KategoriID = kat.KategoriID;
                 }
-                depo.RafNumarasi = fc["RafNumarasi"];
-                depo.AdetSayisi = Convert.ToInt32(fc["AdetSayisi"]);
-                depo.SayfaSayisi = Convert.ToInt32(fc["SayfaSayisi"]);
+                guncelle.RafNumarasi = fc["RafNumarasi"];
+                guncelle.AdetSayisi = Convert.ToInt32(fc["AdetSayisi"]);
+                guncelle.SayfaSayisi = Convert.ToInt32(fc["SayfaSayisi"]);
 
-                depo.AktifMi = true;
-                depo.OlusturmaTarihi = DateTime.Now;
-                depo.GuncellemeTarihi = null;
-
-                db.Kitaps.Add(depo);
+                var tarih = DateTime.Now;
+                guncelle.GuncellemeTarihi = tarih;
                 db.SaveChanges();
-                return RedirectToAction("Kitaplar");
             }
-
-            if (fc["KategoriEkle"] == "Ekle")
-            {
-                kdepo.KategoriAdi = fc["KategoriAdi"];
-                kdepo.Aciklama = fc["Aciklama"];
-                kdepo.OlusturmaTarihi = DateTime.Now;
-                db.Kategoris.Add(kdepo);
-                db.SaveChanges();
-                return RedirectToAction("Kitaplar");
-            }
-
-            if (fc["KitapSil"] == "Sil")
-            {
-                var aranankitap = fc["ISBN"];
-                var kitap = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == aranankitap);
-                if (kitap != null)
-                {
-                    kitap.AktifMi = false;
-                    kitap.GuncellemeTarihi = DateTime.Now;
-                    db.SaveChanges();
-                }
-            }
-
-            if (fc["Buls"] == "Bul")
-            {
-                var arananVeri = fc["ISBN"];
-                var kod = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == arananVeri);
-
-                var model = new Kakitap
-                {
-                    ISBN = arananVeri,
-                    SeciliKitap = kod,
-                    Kitaps = db.Kitaps.ToList(),
-                    Kategoris = db.Kategoris.ToList()
-                };
-                return View(model);
-            }
-
-            if (fc["guncel"] == "dene")
-            {
-
-                var aranankitap = fc["ISBN"];
-                var guncelle = db.Kitaps.FirstOrDefault(k => k.ISBN.ToString() == aranankitap);
-                if (guncelle != null)
-                {
-                    guncelle.KitapAdi = fc["KitapAdi"];
-                    guncelle.YazarAd = fc["YazarAd"];
-                    guncelle.YazarSoyad = fc["YazarSoyad"];
-                    guncelle.YayinEviAdi = fc["YayinEviAdi"];
-                    var Kisim = fc["KategoriAdi"];
-                    var kat = db.Kategoris.FirstOrDefault(k => k.KategoriAdi == Kisim);
-                    if (kat != null)
-                    {
-                        guncelle.KategoriID = kat.KategoriID;
-                    }
-                    guncelle.RafNumarasi = fc["RafNumarasi"];
-                    guncelle.AdetSayisi = Convert.ToInt32(fc["AdetSayisi"]);
-                    guncelle.SayfaSayisi = Convert.ToInt32(fc["SayfaSayisi"]);
-
-                    var tarih = DateTime.Now;
-                    guncelle.GuncellemeTarihi = tarih;
-                    db.SaveChanges();
-                }
-            }
-
-            Kakitap _kakitap = new Kakitap();
-            var kitaplarr = (from Kitap in _kutuphaneOtomasyo.Kitaps select Kitap).ToList();
-            var Kategoriler = (from Kategori in _kutuphaneOtomasyo.Kategoris select Kategori).ToList();
-            _kakitap.Kitaps = kitaplarr;
-            _kakitap.Kategoris = Kategoriler;
-            return View(_kakitap);
         }
+
+        Kakitap _kakitap = new Kakitap();
+        var kitaplarr = (from Kitap in _kutuphaneOtomasyo.Kitaps select Kitap).ToList();
+        var Kategoriler = (from Kategori in _kutuphaneOtomasyo.Kategoris select Kategori).ToList();
+        _kakitap.Kitaps = kitaplarr;
+        _kakitap.Kategoris = Kategoriler;
+        return View(_kakitap);
+    }
+    catch (Exception)
+    {
+        ViewBag.HataMesaji = "Hatalı giriş! Lütfen bilgileri kontrol ediniz.";
+
+        Kakitap _kakitap = new Kakitap();
+        _kakitap.Kitaps = db.Kitaps.ToList();
+        _kakitap.Kategoris = db.Kategoris.ToList();
+        return View(_kakitap);
+    }
+}
 
         public ActionResult Personeller()
         {
