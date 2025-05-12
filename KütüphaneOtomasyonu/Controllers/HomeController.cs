@@ -490,6 +490,14 @@ namespace KütüphaneOtomasyonu.Controllers
             }
             return View(_kakitap);
         }
+         public ActionResult Hakkımızda()
+         {
+            return View();
+         }
+        public ActionResult NasılKullanılır()
+        {
+            return View();
+        }
     }
 
 }
