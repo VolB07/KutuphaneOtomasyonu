@@ -498,6 +498,38 @@ namespace KütüphaneOtomasyonu.Controllers
         {
             return View();
         }
-    }
+        public ActionResult Logout()
+{
+    Session.Clear();
+    return RedirectToAction("Index");
+}
 
+public ActionResult Index()
+{
+    return View();
+}
+
+[HttpPost]
+public JsonResult Login(string username, string password)
+{
+    string hashedPassword = ComputeSha256Hash(password);
+    var user = db.Personels.FirstOrDefault(u => u.Email == username && u.Sifre == hashedPassword && u.AktifMi == true);
+    if (user != null)
+    {
+        HttpCookie cookie = new HttpCookie("KullaniciEmail", user.Email);
+        cookie.Expires = DateTime.Now.AddHours(1);
+        Response.Cookies.Add(cookie);
+
+        string role = user.AdminMi == true ? "SuperAdmin" : "User";
+        Session["UserID"] = user.PersonelID;
+        Session["UserName"] = user.Ad + " " + user.Soyad;
+        Session["UserRole"] = role;
+        return Json(new { success = true, redirectUrl = Url.Action("Kitaplar", "Home") }, "application/json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
+    }
+    else
+    {
+        return Json(new { success = false, message = "Kullanıcı adı veya şifre hatalı." }, "application/json", System.Text.Encoding.UTF8, JsonRequestBehavior.AllowGet);
+            }
+        }
+    }
 }
